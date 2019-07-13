@@ -72,6 +72,7 @@ export default {};
       width: 36px;
       height: 36px;
       vertical-align:middle;
+      border-radius: 50%
     }
   }
 }
