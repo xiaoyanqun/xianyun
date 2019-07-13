@@ -24,7 +24,7 @@
           </span>
           <el-dropdown-menu slot="dropdown">
             <el-dropdown-item>个人中心</el-dropdown-item>
-            <el-dropdown-item>退出</el-dropdown-item>
+            <el-dropdown-item @click.native ="handleLogOut">退出</el-dropdown-item>
           </el-dropdown-menu>
         </el-dropdown>
       </div>
@@ -32,7 +32,18 @@
   </div>
 </template>
 <script>
-export default {};
+export default {
+  data(){
+    return {
+      
+    }
+  },
+  methods:{
+    handleLogOut(){
+      this.$store.commit('user/delUserInfo')
+    }
+  }
+};
 </script>
 <style lang='less' scoped>
 .container {

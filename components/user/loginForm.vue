@@ -63,16 +63,9 @@ export default {
         // 提交登录
    handlelogin(){
     this.$refs.form.validate(valid=>{
+      console.log(this);
       if(valid){
-        this.$axios({
-          url:'/accounts/login',
-          method:'post',
-          data:this.form
-        }).then(res=>{
-          this.$store.commit('user/setUserInfo',res.data)
-          this.$message.success('登录成功，正在跳转')
-          this.$router.push({path:'/'})
-        })
+        this.$store.dispatch('user/login',this.form)
       }
     })
    }
