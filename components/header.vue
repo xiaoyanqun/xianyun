@@ -12,14 +12,14 @@
         <nuxt-link to="/hotel">酒店</nuxt-link>
         <nuxt-link to="/air">国内机票</nuxt-link>
       </el-row>
-      <div class="login" v-if="false">
+      <div class="login" v-if="!$store.state.user.userInfo.token">
         <nuxt-link to="/user/login">登录 / 注册</nuxt-link>
       </div>
-      <div class="logout" v-if="true">
+      <div class="logout" v-if="$store.state.user.userInfo.token">
         <el-dropdown>
           <span class="el-dropdown-link">
-            <img src="https://ss0.bdstatic.com/94oJfD_bAAcT8t7mm9GUKT-xh_/timg?image&quality=100&size=b4000_4000&sec=1562849498&di=b2f08b6582e121a6014fb1cdc3200cac&src=http://b-ssl.duitang.com/uploads/item/201710/07/20171007171838_Fe5YN.thumb.700_0.jpeg" alt="">
-            赵丽颖
+            <img :src="$axios.defaults.baseURL + $store.state.user.userInfo.user.defaultAvatar" alt="">
+            {{$store.state.user.userInfo.user.nickname}}
             <i class="el-icon-arrow-down el-icon--right"></i>
           </span>
           <el-dropdown-menu slot="dropdown">
