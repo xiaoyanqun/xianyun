@@ -23,7 +23,17 @@ export const actions = {
       commit('setUserInfo',res.data)
       console.log(this);
       this._vm.$message.success('登录成功，正在跳转')
-      this.$router.push({path:'/'})
+      this.$router.back();
     })
+  },
+  register( {commit,dispatch},data ){
+    this.$axios({
+      url:'/accounts/register',
+      method:'post',
+      data
+  }).then(res=>{
+    const {username,password} = JSON.parse(res.config.data)
+    dispatch('login',{username,password})
+  })
   }
 }
