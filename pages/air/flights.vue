@@ -16,8 +16,8 @@
           <FlightsItem :data="item" v-for="(item,index) in tempList" :key="index" />
         </div>
         <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
+         @size-change="handleSizeChange"
+         @current-change="handleCurrentChange"
           :current-page="pageIndex"
           :page-sizes="[5, 10, 15, 20]"
           :page-size="pageSize"
@@ -40,32 +40,36 @@ import FlightsItem from "@/components/air/flightsItem.vue";
 export default {
   data() {
     return {
-      airList: {},
-      tempList:[],
+      airList: {
+        flights:[]
+      },
       pageIndex: 1,
       pageSize: 5,
       total: 5,
     };
   },
+  computed:{
+   tempList(){
+      return this.airList.flights.slice(
+        (this.pageIndex - 1)*this.pageSize,
+        this.pageIndex *this.pageSize)
+   }
+  },
   methods: {
     handleSizeChange(val) {
-      console.log(`每页 ${val} 条`);
       this.pageIndex = 1
       this.pageSize = val
-      this.setDataList()
     },
     handleCurrentChange(val) {
-      console.log(`当前页: ${val}`);
       this.pageIndex = val
-      this.setDataList()
     },
     // 显示页面数据
-    setDataList(){
-       this.tempList = this.airList.flights.slice(
-        (this.pageIndex - 1)*this.pageSize,
-        this.pageIndex *this.pageSize
-      )
-    }
+    // setDataList(){
+    //    this.tempList = this.airList.flights.slice(
+    //     (this.pageIndex - 1)*this.pageSize,
+    //     this.pageIndex *this.pageSize
+    //   )
+    // }
   },
   components: {
     FlightsListHead,
@@ -79,7 +83,6 @@ export default {
       console.log(res);
       this.airList = res.data;
       this.total = res.data.total
-      this.setDataList()
     });
   }
 };
