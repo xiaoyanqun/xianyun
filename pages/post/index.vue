@@ -3,65 +3,7 @@
     <el-row type="flex" justify="space-between">
       <div class="post-left">
         <!-- tab栏切换  -->
-        <div class="menus-body">
-          <ul class="menus">
-            <li class="menus-item">
-              <span>热门城市</span>
-              <i class="el-icon-arrow-right"></i>
-            </li>
-            <li class="menus-item">
-              <span>推荐城市</span>
-              <i class="el-icon-arrow-right"></i>
-            </li>
-            <li class="menus-item">
-              <span>奔向海岛</span>
-              <i class="el-icon-arrow-right"></i>
-            </li>
-            <li class="menus-item">
-              <span>主题推荐</span>
-              <i class="el-icon-arrow-right"></i>
-            </li>
-          </ul>
-          <div class="sub-menus">
-            <ul>
-              <li>
-                <nuxt-link to="/">
-                  <em>1</em>
-                  <strong>北京</strong>
-                  <span>世界著名古都和现代化国际城市</span>
-                </nuxt-link>
-              </li>
-              <li>
-                <nuxt-link to="/">
-                  <em>2</em>
-                  <strong>北京</strong>
-                  <span>世界著名古都和现代化国际城市</span>
-                </nuxt-link>
-              </li>
-              <li>
-                <nuxt-link to="/">
-                  <em>3</em>
-                  <strong>北京</strong>
-                  <span>世界著名古都和现代化国际城市</span>
-                </nuxt-link>
-              </li>
-              <li>
-                <nuxt-link to="/">
-                  <em>4</em>
-                  <strong>北京</strong>
-                  <span>世界著名古都和现代化国际城市</span>
-                </nuxt-link>
-              </li>
-              <li>
-                <nuxt-link to="/">
-                  <em>5</em>
-                  <strong>北京</strong>
-                  <span>世界著名古都和现代化国际城市</span>
-                </nuxt-link>
-              </li>
-            </ul>
-          </div>
-        </div>
+       <Tab/>
         <div class="aside-recommend">
           <h2>推荐城市</h2>
           <nuxt-link to="/">
@@ -88,7 +30,17 @@
   </div>
 </template>
 <script>
-export default {};
+import Tab from '@/components/post/tab'
+export default {
+  data(){
+    return{
+
+    }
+  },
+  components:{
+    Tab
+  }
+};
 </script>
 <style lang="less" scoped>
 .container {
@@ -97,79 +49,7 @@ export default {};
   width: 1000px;
   .post-left {
     width: 260px;
-    .menus-body {
-      margin-bottom: 20px;
-      position: relative;
-      .menus {
-        position: relative;
-        background-color: #fff;
-        z-index:2;
-        border: 1px solid #ddd;
-        border-bottom: none;
-        border-right: none;
-        .menus-item {
-          &:hover{
-            border-right: none;
-          }
-          &:hover span{
-            color:orange
-          }
-           &:hover i{
-            color:orange
-          }
-          height: 40px;
-          line-height: 40px;
-          padding: 0 20px;
-          font-size: 14px;
-          border-right: 1px solid #ddd;
-          border-bottom: 1px solid #ddd;
-          i {
-            margin-left: 136px;
-            font-size: 20px;
-            color: #ddd;
-          }
-        }
-      }
-      .sub-menus{
-        display: none;
-        z-index: 1;
-        background-color: #fff;
-        top: 0;
-        right: -390px;
-        position:absolute;
-        border: 1px solid #ddd;
-        width: 350px;
-        padding:10px 20px;
-        ul{
-          li{
-            height: 36px;
-            line-height: 36px;
-            em{
-              font-size: 24px;
-              color:orange;
-              font-style:italic;
-              margin-right: 5px;
-            }
-            strong{
-              &:hover{
-                    text-decoration: underline;
-              }
-              font-weight: 400;
-              color:orange;
-              margin-right: 5px;
-               font-size: 14px;
-            }
-            span{
-              &:hover{
-                    text-decoration: underline;
-              }
-              color:#999;
-               font-size: 14px;
-            }
-          }
-        }
-      }
-    }
+    
     .aside-recommend{
       h2{
         font-weight: 400;

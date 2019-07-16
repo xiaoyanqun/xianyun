@@ -66,6 +66,7 @@ export default {
         destCode: "", //目标城市code
         departDate: "" //出发时间
       },
+
       tabs: [
         { icon: "iconfont icondancheng", name: "单程" },
         { icon: "iconfont iconshuangxiang", name: "往返" }
@@ -75,7 +76,25 @@ export default {
   },
   methods: {
     // 封装方法
-    getCity(value, cb, cityname, code) {},
+    getCity(value) {
+      return new Promise((resolve, rej) => {
+        if (value === "") {
+          resolve([]);
+          return;
+        }
+        this.$axios({
+          url: "/airs/city",
+          params: { name: value }
+        }).then(res => {
+          console.log(res);
+          const val = res.data.data.map(v => {
+            v.value = v.name.replace("市", "");
+            return v;
+          });
+          resolve(val);
+        });
+      });
+    },
     // tab切换时触发
     handleSearchTab(item, index) {
       if (index === 1) {
@@ -87,46 +106,25 @@ export default {
 
     // 出发城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列.
-    queryDepartSearch(value, cb) {
-      if (value === "") {
-        cb([]);
-        return;
+    async queryDepartSearch(value, cb) {
+      const res = await this.getCity(value);
+      if (res.length > 0) {
+        this.form.departCity = res[0].value;
+        this.form.departCode = res[0].sort;
       }
-      this.$axios({
-        url: "/airs/city",
-        params: { name: value }
-      }).then(res => {
-        console.log(res);
-        const val = res.data.data.map(v => {
-          v.value = v.name.replace("市", "");
-          return v;
-        });
-        this.form.departCity = val[0].value;
-        this.form.departCode = val[0].sort;
-        cb(val);
-      });
+      cb(res);
     },
 
     // 目标城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表
-    queryDestSearch(value, cb) {
-      if (value === "") {
-        cb([]);
-        return;
+    async queryDestSearch(value, cb) {
+      const res = await this.getCity(value);
+      if (res.length > 0) {
+        this.form.destCity = res[0].value;
+        this.form.destCode = res[0].sort;
       }
-      this.$axios({
-        url: "/airs/city",
-        params: { name: value }
-      }).then(res => {
-        console.log(res);
-        const val = res.data.data.map(v => {
-          v.value = v.name.replace("市", "");
-          return v;
-        });
-        this.form.destCity = val[0].value;
-        this.form.destCode = val[0].sort;
-        cb(val);
-      });
+
+      cb(res);
     },
 
     // 出发城市下拉选择时触发
@@ -158,37 +156,35 @@ export default {
     // 提交表单是触发
     handleSubmit() {
       const rules = {
-        departCity:{
-          value:this.form.departCity,
-          message:'请选择出发城市'
+        departCity: {
+          value: this.form.departCity,
+          message: "请选择出发城市"
         },
-        destCity:{
-          value:this.form.destCity,
-          message:'请选择目标城市'
+        destCity: {
+          value: this.form.destCity,
+          message: "请选择目标城市"
         },
-        departDate:{
-          value:this.form.departDate,
-          message:'请选择出发日期'
+        departDate: {
+          value: this.form.departDate,
+          message: "请选择出发日期"
         }
+      };
+      let flag = true;
+      Object.keys(rules).forEach(v => {
+        if (!flag) return;
+        if (!rules[v].value) {
+          flag = false;
+          this.$message.warning(rules[v].message);
+        }
+      });
+      if (flag) {
+        this.$router.push({
+          path: "/airs/flights",
+          query: this.form
+        });
       }
-      let flag = true
-      Object.keys(rules).forEach(v=>{
-        if(!flag) return
-        if(!rules[v].value){
-          flag = false
-          this.$message.warning(rules[v].message)
-        }
-      })
-      if(flag){
-                this.$router.push({
-                    path: "/airs/flights",
-                    query: this.form
-                })
-            }
-
     }
-  },
-  mounted() {}
+  }
 };
 </script>
 

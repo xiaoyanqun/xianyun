@@ -33,51 +33,12 @@
       <i>特价机票</i>
     </h2>
     <el-row class="special">
-      <el-col :span="6">
-        <nuxt-link to="/">
-          <img
-            src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=d4e2f29522381f309a198aab99004c67/6a63f6246b600c33cd891e65104c510fd8f9a1af.jpg"
-            alt
-          />
+      <el-col :span="6" v-for="(item,index) in special" :key ="index">
+        <nuxt-link :to="`/air/flights?departCity=${item.departCity}&departCode=${item.departCode}&destCity=${item.destCity}&destCode=${item.destCode}&departDate=${item.departDate}`">
+         <img :src="item.cover" alt="">
           <el-row type="flex" justify="space-around" class="link">
-            <span>广州-上海</span>
-            <span>￥669</span>
-          </el-row>
-        </nuxt-link>
-      </el-col>
-      <el-col :span="6">
-        <nuxt-link to="/">
-          <img
-            src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=d4e2f29522381f309a198aab99004c67/6a63f6246b600c33cd891e65104c510fd8f9a1af.jpg"
-            alt
-          />
-          <el-row type="flex" justify="space-around" class="link">
-            <span>广州-上海</span>
-            <span>￥669</span>
-          </el-row>
-        </nuxt-link>
-      </el-col>
-      <el-col :span="6">
-        <nuxt-link to="/">
-          <img
-            src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=d4e2f29522381f309a198aab99004c67/6a63f6246b600c33cd891e65104c510fd8f9a1af.jpg"
-            alt
-          />
-          <el-row type="flex" justify="space-around" class="link">
-            <span>广州-上海</span>
-            <span>￥669</span>
-          </el-row>
-        </nuxt-link>
-      </el-col>
-      <el-col :span="6">
-        <nuxt-link to="/">
-          <img
-            src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=d4e2f29522381f309a198aab99004c67/6a63f6246b600c33cd891e65104c510fd8f9a1af.jpg"
-            alt
-          />
-          <el-row type="flex" justify="space-around" class="link">
-            <span>广州-上海</span>
-            <span>￥669</span>
+            <span>{{item.departCity}}-{{item.destCity}}</span>
+            <span>￥{{item.price}}</span>
           </el-row>
         </nuxt-link>
       </el-col>
@@ -88,9 +49,18 @@
 import SearchForm from '@/components/air/searchForm'
 export default {
   data() {
-    return {};
+    return {
+      special:[],
+    };
   },
-  mounted() {},
+   mounted() {
+    this.$axios({
+      url:'/airs/sale'
+    }).then(res=>{
+      console.log(res.data)
+      this.special = res.data.data
+    })
+  },
   components:{
     SearchForm
   }
@@ -148,11 +118,13 @@ export default {
     margin-bottom: 50px;
     border: 1px solid #ddd;
     .el-col {
+       position: relative;
       text-align: center;
-
+      overflow: hidden;
       height: 140px;
-      .nuxt-link-active {
-        position: relative;
+      
+      a {
+       
         display: block;
         width:225px;
         margin:0 auto;
@@ -162,13 +134,14 @@ export default {
           margin: 0 auto;
         }
         .link{
+          margin:0 7.25px;
           color:#fff;
           position:absolute;
           left: 0;
           bottom:0;
           background: rgba(0,0,0,.5);
           height: 30px;
-          width: 100%;
+          width:225px;
           line-height: 30px;
         }
       }
