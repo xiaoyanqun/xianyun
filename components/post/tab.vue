@@ -23,7 +23,7 @@
           :key="index"
         >
           <ul>
-            <li v-for="(item1,index1) in item.children" :key="index1" >
+            <li v-for="(item1,index1) in item.children" :key="index1" @click="search">
               <nuxt-link :to="'/post?city='+item1.city">
                 <em>{{index1+1}}</em>
                 <strong>{{item1.city}}</strong>
@@ -45,6 +45,9 @@ export default {
     };
   },
   methods: {
+    search(){
+       this.$emit('fatherMethod');
+    },
     handleChangeTab(value) {
       this.currentTab = value;
       this.isShow = true;

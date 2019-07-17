@@ -3,7 +3,7 @@
     <el-row type="flex" justify="space-between">
       <div class="post-left">
         <!-- tab栏切换  -->
-        <Tab />
+        <Tab @fatherMethod="fatherMethod"/>
         <div class="aside-recommend">
           <h2>推荐城市</h2>
           <nuxt-link to="/post#">
@@ -14,21 +14,35 @@
       <div class="post-right">
         <!-- 搜索 -->
         <el-row type="flex" class="search">
-          <input type="text" placeholder="请输入你想去的地方，比如：'广州'" />
-          <i class="el-icon-search"></i>
+          <input
+            @keyup.13="search"
+            v-model="city"
+            type="text"
+            placeholder="请输入你想去的地方，比如：'广州'"
+          />
+          <i class="el-icon-search" @click="search"></i>
         </el-row>
         <div class="search-recommend">
           推荐：
-          <span>广州</span>
-          <span>上海</span>
-          <span>北京</span>
+          <span @click="city='广州',init()">广州</span>
+          <span @click="city='上海',init()">上海</span>
+          <span @click="city='北京',init()">北京</span>
         </div>
         <!-- 推荐攻略 -->
         <el-row type="flex" justify="space-between" class="strategy">
           <h2 class="strategy-title">推荐攻略</h2>
-          <el-button type="primary" icon="el-icon-edit" style="height:40px">写游记</el-button>
+          <el-button @click="$router.push('/post/create')" type="primary" icon="el-icon-edit" style="height:40px">写游记</el-button>
         </el-row>
-        <List v-for="(item,index) in postsList" :key="index" :data="item"/>
+        <List v-for="(item,index) in postsList" :key="index" :data="item" />
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="pageIndex"
+          :page-sizes="[3,6, 9, 12]"
+          :page-size="this.get._limit"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        ></el-pagination>
       </div>
     </el-row>
   </div>
@@ -36,25 +50,63 @@
 <script>
 import Tab from "@/components/post/tab";
 import List from "@/components/post/list";
-// import ListOne from "@/components/post/list-one";
 export default {
   data() {
     return {
+      pageIndex: 1,
       postsList: [],
-      get:{
-        _start:0,
-        _limit:3
+      total: 3,
+      city: "",
+      get: {
+        _start: 0,
+        _limit: 3
       }
     };
   },
+  methods: {
+    handleSizeChange(val) {
+      console.log(`每页 ${val} 条`);
+      this.get._limit = val;
+      this.init();
+    },
+    handleCurrentChange(val) {
+      console.log(`当前页: ${val}`);
+      this.get._start = (val - 1) * this.get._limit;
+      this.init();
+    },
+    search() {
+      this.get._start = 0;
+      this.init();
+    },
+    init() {
+      if (this.city.trim()) {
+        console.log(this.city.trim());
+         this.$axios({
+          url: "/posts",
+          params: {city:this.city,...this.get}
+        }).then(res => {
+          console.log(res);
+          this.postsList = res.data.data;
+          this.total = res.data.total;
+        });
+      } else {
+        this.$axios({
+          url: "/posts",
+          params: this.get
+        }).then(res => {
+          console.log(res);
+          this.postsList = res.data.data;
+          this.total = res.data.total;
+        });
+      }
+    },
+    fatherMethod(){
+      this.city = this.$route.query.city
+      this.init()
+    }
+  },
   mounted() {
-    this.$axios({
-      url: "/posts",
-      params:this.get
-    }).then(res => {
-      console.log(res);
-      this.postsList = res.data.data;
-    });
+    this.init();
   },
   components: {
     Tab,
