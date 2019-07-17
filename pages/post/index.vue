@@ -3,42 +3,62 @@
     <el-row type="flex" justify="space-between">
       <div class="post-left">
         <!-- tab栏切换  -->
-       <Tab/>
+        <Tab />
         <div class="aside-recommend">
           <h2>推荐城市</h2>
-          <nuxt-link to="/">
-            <img src="https://gss2.bdstatic.com/9fo3dSag_xI4khGkpoWK1HF6hhy/baike/s%3D220/sign=d4e2f29522381f309a198aab99004c67/6a63f6246b600c33cd891e65104c510fd8f9a1af.jpg" alt="">
+          <nuxt-link to="/post#">
+            <img src="../../images/pic_sea.jpeg" alt />
           </nuxt-link>
         </div>
       </div>
       <div class="post-right">
         <!-- 搜索 -->
         <el-row type="flex" class="search">
-          <input type="text" placeholder="请输入你想去的地方，比如：'广州'">
+          <input type="text" placeholder="请输入你想去的地方，比如：'广州'" />
           <i class="el-icon-search"></i>
         </el-row>
         <div class="search-recommend">
-          推荐： <span>广州</span><span>上海</span><span>北京</span>
+          推荐：
+          <span>广州</span>
+          <span>上海</span>
+          <span>北京</span>
         </div>
         <!-- 推荐攻略 -->
-        <el-row type='flex' justify="space-between" class="strategy">
+        <el-row type="flex" justify="space-between" class="strategy">
           <h2 class="strategy-title">推荐攻略</h2>
           <el-button type="primary" icon="el-icon-edit" style="height:40px">写游记</el-button>
         </el-row>
+        <List v-for="(item,index) in postsList" :key="index" :data="item"/>
       </div>
     </el-row>
   </div>
 </template>
 <script>
-import Tab from '@/components/post/tab'
+import Tab from "@/components/post/tab";
+import List from "@/components/post/list";
+// import ListOne from "@/components/post/list-one";
 export default {
-  data(){
-    return{
-
-    }
+  data() {
+    return {
+      postsList: [],
+      get:{
+        _start:0,
+        _limit:3
+      }
+    };
   },
-  components:{
-    Tab
+  mounted() {
+    this.$axios({
+      url: "/posts",
+      params:this.get
+    }).then(res => {
+      console.log(res);
+      this.postsList = res.data.data;
+    });
+  },
+  components: {
+    Tab,
+    List
   }
 };
 </script>
@@ -49,63 +69,64 @@ export default {
   width: 1000px;
   .post-left {
     width: 260px;
-    
-    .aside-recommend{
-      h2{
+
+    .aside-recommend {
+      h2 {
         font-weight: 400;
-        padding-bottom:10px;
+        padding-bottom: 10px;
         font-size: 16px;
-        border-bottom:1px solid #ddd;
+        border-bottom: 1px solid #ddd;
         margin-bottom: 10px;
+      }
+      img {
+        width: 100%;
       }
     }
   }
   .post-right {
     width: 700px;
-    .search{
-      border:2px solid orange;
+    .search {
+      border: 2px solid orange;
       height: 40px;
       line-height: 40px;
-      input{
+      input {
         border: none;
         outline: none;
         padding: 0 20px;
-        flex:1;
+        flex: 1;
       }
-      i{
+      i {
         font-weight: 700;
         font-size: 24px;
         color: orange;
         height: 24px;
         line-height: 24px;
-        vertical-align:middle;
+        vertical-align: middle;
         margin: auto 10px;
       }
     }
-    .search-recommend{
+    .search-recommend {
       font-size: 12px;
-      color:#666;
+      color: #666;
       padding: 10px 0;
-      span{
+      span {
         margin-left: 8px;
-        &:hover{
+        &:hover {
           text-decoration: underline;
-          color:orange;
+          color: orange;
           cursor: pointer;
         }
       }
     }
-    .strategy{
-      margin-top:10px;
-      border-bottom: 1px solid #ddd;
-      .strategy-title{
+    .strategy {
+      margin-top: 10px;
+      .strategy-title {
         display: inline-block;
-        color:orange;
+        color: orange;
         font-size: 18px;
         font-weight: 400;
         padding-bottom: 20px;
         border-bottom: 2px solid orange;
-        // padding-bottom:
       }
     }
   }
