@@ -57,7 +57,6 @@ export default {
     this.$axios({
       url:'/airs/sale'
     }).then(res=>{
-      console.log(res.data)
       this.special = res.data.data
     })
   },

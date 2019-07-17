@@ -4,7 +4,9 @@
       <!-- 顶部过滤列表 -->
       <div class="flights-content">
         <!-- 过滤条件 -->
-        <div></div>
+        <div>
+          <FlightsFilters :data='unAirList' @changeList="changeList"/>
+        </div>
 
         <!-- 航班头部布局 -->
         <div>
@@ -28,21 +30,31 @@
 
       <!-- 侧边栏 -->
       <div class="aside">
-        <!-- 侧边栏组件 -->
+        <FlightsAside/>
       </div>
     </el-row>
   </section>
 </template>
 
 <script>
+import FlightsFilters from "@/components/air/flightsFilters.vue"
 import FlightsListHead from "@/components/air/flightsListHead.vue";
 import FlightsItem from "@/components/air/flightsItem.vue";
+import FlightsAside from "@/components/air/flightsAside.vue"
 export default {
   data() {
     return {
       airList: {
-        flights:[]
+        flights:[],
+        info:{},
+        options:{},
       },
+      unAirList: {
+        flights:[],
+        info:{},
+        options:{},
+      },
+
       pageIndex: 1,
       pageSize: 5,
       total: 5,
@@ -63,6 +75,10 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = val
     },
+    // 筛选机票列表数据
+    changeList(arr){
+      this.airList.flights = arr
+    }
     // 显示页面数据
     // setDataList(){
     //    this.tempList = this.airList.flights.slice(
@@ -73,16 +89,20 @@ export default {
   },
   components: {
     FlightsListHead,
-    FlightsItem
+    FlightsItem,
+    FlightsFilters,
+    FlightsAside
   },
   mounted() {
     this.$axios({
       url: "/airs",
       params: this.$route.query
     }).then(res => {
-      console.log(res);
+      console.log(res.data);
       this.airList = res.data;
       this.total = res.data.total
+      // 不改变的机票列表数据
+      this.unAirList = {...res.data}
     });
   }
 };
