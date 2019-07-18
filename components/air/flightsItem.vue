@@ -94,6 +94,9 @@ export default {
   },
   mounted() {},
   methods: {
+    isShow1(){
+      this.isShow = false
+    },
     handleChoose(id, seat_xid) {
       this.$router.push({
         path: "/air/order",

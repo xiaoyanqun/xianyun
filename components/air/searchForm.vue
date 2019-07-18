@@ -56,6 +56,7 @@
 
 <script>
 import moment from "moment";
+import localStorage from '../../plugins/localStorage';
 export default {
   data() {
     return {
@@ -182,7 +183,26 @@ export default {
           path: "/air/flights",
           query: this.form
         });
+        
       }
+      // 将搜索记录保存到本地
+        const airs = JSON.parse(window.localStorage.getItem('airs')) || []
+         // // 截取只剩下5个
+        airs.unshift(this.form)
+        if(airs.length > 5){
+                airs.length = 5;
+            }
+        window.localStorage.setItem('airs',JSON.stringify(airs))
+       // 把当前的搜索条件存储到本地的数组中
+            // const airs = JSON.parse( localStorage.getItem("airs")  ) || [];
+            // airs.unshift( this.form )
+
+           
+            // if(airs.length > 5){
+            //     airs.length = 5;
+            // }
+
+            // localStorage.setItem("airs",  JSON.stringify(airs) );
     }
   }
 };

@@ -35,7 +35,7 @@ export default {
     '@/plugins/element-ui',
     '@/plugins/axios',
     // 使用这个插件可以让vuex中的数据自动保存到本地，并且从新加载页面是从新获取
-    { src: '@/plugins/localStorage', ssr: false },
+    { src: '@/plugins/localStorage.js', ssr: false },
     { src: "~plugins/vue-quill-editor.js", ssr: false }
 
   ],

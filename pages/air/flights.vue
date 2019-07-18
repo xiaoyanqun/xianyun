@@ -15,7 +15,7 @@
 
         <!-- 航班信息 -->
         <div>
-          <FlightsItem :data="item" v-for="(item,index) in tempList" :key="index" />
+          <FlightsItem  ref="child"  :data="item" v-for="(item,index) in tempList" :key="index" />
         </div>
         <el-pagination
          @size-change="handleSizeChange"
@@ -44,6 +44,7 @@ import FlightsAside from "@/components/air/flightsAside.vue"
 export default {
   data() {
     return {
+      flag:true,
       airList: {
         flights:[],
         info:{},
@@ -60,6 +61,12 @@ export default {
       total: 5,
     };
   },
+  watch:{
+    // 监听路由的变化重新显示数据
+    $route(){
+      this.init()
+    }
+  },
   computed:{
    tempList(){
       return this.airList.flights.slice(
@@ -74,11 +81,12 @@ export default {
     },
     handleCurrentChange(val) {
       this.pageIndex = val
+      this.$refs.child[0].isShow1()
     },
     // 筛选机票列表数据
     changeList(arr){
       this.airList.flights = arr
-    }
+    },
     // 显示页面数据
     // setDataList(){
     //    this.tempList = this.airList.flights.slice(
@@ -86,15 +94,8 @@ export default {
     //     this.pageIndex *this.pageSize
     //   )
     // }
-  },
-  components: {
-    FlightsListHead,
-    FlightsItem,
-    FlightsFilters,
-    FlightsAside
-  },
-  mounted() {
-    this.$axios({
+    init(){
+      this.$axios({
       url: "/airs",
       params: this.$route.query
     }).then(res => {
@@ -104,6 +105,16 @@ export default {
       // 不改变的机票列表数据
       this.unAirList = {...res.data}
     });
+    }
+  },
+  components: {
+    FlightsListHead,
+    FlightsItem,
+    FlightsFilters,
+    FlightsAside
+  },
+  mounted() {
+    this.init()
   }
 };
 </script>
