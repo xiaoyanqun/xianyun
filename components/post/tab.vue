@@ -51,7 +51,6 @@ export default {
     handleChangeTab(value) {
       this.currentTab = value;
       this.isShow = true;
-      console.log(this.isShow);
     },
     handleTab() {
       (this.currentTab = -1), (this.isShow = false);
@@ -61,7 +60,6 @@ export default {
     this.$axios({
       url: "/posts/cities"
     }).then(res => {
-      console.log(res);
       this.cityList = res.data.data;
     });
   }
