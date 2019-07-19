@@ -9,11 +9,9 @@
             <el-input v-model="addform.title" class="title-input" widht="100%" placeholder="请输入标题"></el-input>
           </el-form-item>
           <el-form-item>
-            <div
-              class="quill-editor"
-              v-model="addform.content"
-              v-quill:myQuillEditor="editorOption"
-            ></div>
+            <div id="app">
+              <VueEditor :config="config" ref="vueEditor" style="height:400px;margin-bottom:60px"/>
+            </div>
           </el-form-item>
           <el-form-item label="选择城市" label-width="80px">
             <el-autocomplete
@@ -38,13 +36,16 @@
   </div>
 </template>
 <script>
-// import { quillEditor } from 'vue-quill-editor'
-import "quill/dist/quill.core.css";
-import "quill/dist/quill.snow.css";
-import "quill/dist/quill.bubble.css";
+import "quill/dist/quill.snow.css"
+let VueEditor;
+
+if (process.browser) {
+    VueEditor = require('vue-word-editor').default
+}
 import moment from "moment";
 import Draft from "@/components/post/draft.vue";
 export default {
+  name: 'app',
   data() {
     return {
       cityName: "",
@@ -54,24 +55,65 @@ export default {
         title: "",
         city: ""
       },
-      editorOption: {
-        // some quill options
-        modules: {
-          toolbar: [
-            ["bold", "italic", "underline", "strike"],
-            ["blockquote", "code-block", { header: 1 }, { header: 2 }],
-            ["image", "video"]
-          ]
-        }
+     config: {
+      modules: { 
+        // 工具栏
+        toolbar: [
+          ['bold', 'italic', 'underline', 'strike'],        // toggled buttons
+          ['blockquote', 'code-block'],
+          ['image', 'video'],
+
+          [{ 'header': 1 }, { 'header': 2 }],               // custom button values
+          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+          [{ 'script': 'sub'}, { 'script': 'super' }],      // superscript/subscript
+          [{ 'indent': '-1'}, { 'indent': '+1' }],          // outdent/indent
+          [{ 'direction': 'rtl' }],                         // text direction
+        ]
+      },
+      // 主题
+      theme: 'snow',
+      uploadImage: {
+        url: "http://localhost:1337/upload",
+        name: "files",
+        uploadBefore(file){
+          return true
+        },
+        uploadProgress(res){
+
+        },
+        uploadSuccess(res, insert){
+          insert("http://localhost:1337" + res.data[0].url)
+        },
+        uploadError(){},
+        showProgress: true
+      },
+
+      uploadVideo: {
+        //url: "http://157.122.54.189:9095/upload",
+        url: "http://localhost:1337/upload",
+        name: "files",
+        uploadBefore(file){
+          return true
+        },
+        uploadProgress(res){
+
+        },
+        uploadSuccess(res, insert){
+          insert("http://localhost:1337" + res.data[0].url)
+        },
+        uploadError(){},
       }
+    }
     };
   },
   components: {
-    Draft
+    Draft,
+    VueEditor
   },
   methods: {
     // 发布游记
     add() {
+      this.addform.content = this.$refs.vueEditor.editor.root.innerHTML
       const rules = {
         title: {
           value: this.addform.title,
@@ -99,19 +141,22 @@ export default {
         }
       });
       if (flag) {
-        const token = this.$store.state.user.userInfo.token
+        const token = this.$store.state.user.userInfo.token;
         this.$axios({
           url: "/posts",
-          method:'post',
+          method: "post",
           data: this.addform,
           headers: {
-            'Authorization': 'Bearer ' + token,
-        }
-        }).then(res=>{
-          console.log(res)
-          this.$message.success('新增成功')
-        })
+            Authorization: "Bearer " + token
+          }
+        }).then(res => {
+          console.log(res);
+          this.$message.success("新增成功");
+        });
       }
+    },
+    onEditorChange(e) {
+      console.log(e);
     },
     // 目标城市输入框获得焦点时触发
     // value 是选中的值，cb是回调函数，接收要展示的列表

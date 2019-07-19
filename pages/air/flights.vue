@@ -82,6 +82,8 @@ export default {
     handleCurrentChange(val) {
       this.pageIndex = val
       this.$refs.child[0].isShow1()
+      this.$refs.child[1].isShow1()
+      this.$refs.child[2].isShow1()
     },
     // 筛选机票列表数据
     changeList(arr){

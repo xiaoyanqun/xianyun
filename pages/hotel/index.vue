@@ -1,8 +1,34 @@
 <template>
-  <div>酒店首页</div>
+  <div class="correlation">
+    <h4>酒店 > 南京市酒店预订</h4>
+    <!-- 筛选 -->
+    <div>
+      <Screen/>
+    </div>
+  </div>
 </template>
 <script>
-export default {};
+import Screen from '@/components/hotel/screen'
+export default {
+  data(){
+    return {
+
+    }
+  },
+  components:{
+    Screen
+  }
+};
 </script>
-<style >
+<style lang="less" scoped>
+.correlation {
+  width: 1000px;
+  margin: 0 auto;
+  margin-top: 20px;
+  h4 {
+        font-weight: 400;
+    color: #606266;
+    cursor: text;
+  }
+}
 </style>
