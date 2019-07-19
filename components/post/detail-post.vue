@@ -15,7 +15,7 @@
           <i class="iconfont iconpinglun"></i>
           <p>评论({{postsList.comments.length}})</p>
         </div>
-        <div class="ctrl-item">
+        <div class="ctrl-item" @click="collect(postsList.id)">
           <i class="iconfont iconstar1"></i>
           <p>收藏</p>
         </div>
@@ -23,9 +23,10 @@
           <i class="iconfont iconfenxiang"></i>
           <p>分享</p>
         </div>
-        <div class="ctrl-item">
+        <div class="ctrl-item" @click="islike(postsList.id)">
           <i class="iconfont iconding"></i>
-          <p>点赞({{postsList.city.level}})</p>
+          <p v-if="postsList.like">点赞({{postsList.like}})</p>
+          <p v-if="!postsList.like">点赞({{like}})</p>
         </div>
       </el-row>
     </div>
@@ -35,20 +36,59 @@
 export default {
   data() {
     return {
+      like: 0,
       postsList: {
         city: {},
-        comments:[],
+        comments: []
       }
     };
   },
+  watch:{
+    $route(){
+      this.getPostsById()
+    }
+  },
   mounted() {
-    this.$axios({
+    this.getPostsById()
+  },
+  methods: {
+    getPostsById(){
+      this.$axios({
       url: "/posts",
       params: { id: this.$route.query.id }
     }).then(res => {
       this.postsList = res.data.data[0];
       console.log(this.postsList);
     });
+    },
+    islike(id) {
+      const token = this.$store.state.user.userInfo.token;
+      this.$axios({
+        url: "/posts/like",
+        params: { id },
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }).then(res => {
+        console.log(res);
+        this.$message.success("点赞成功");
+      });
+    },
+    collect(id) {
+      const token = this.$store.state.user.userInfo.token;
+      this.$axios({
+        url: "/posts/star",
+        params: { id },
+        headers: {
+          Authorization: "Bearer " + token
+        }
+      }).then(res => {
+        console.log(res);
+        this.$message.success("收藏成功");
+        this.like++;
+        this.postsList.like++;
+      });
+    }
   }
 };
 </script>
