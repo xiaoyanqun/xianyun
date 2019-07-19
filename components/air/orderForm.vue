@@ -59,7 +59,7 @@
               </template>
             </el-input>
           </el-form-item>
-
+            <input type="hidden" :value="allPrice"/>
           <el-form-item label="验证码">
             <el-input v-model="form.captcha"></el-input>
           </el-form-item>
@@ -89,6 +89,27 @@ export default {
       } // 机票信息数据
     };
   },
+  computed:{
+      allPrice(){
+            let price = 0;
+
+            if(!this.infoData.airport_tax_audlet)  return 0;
+
+            // 机票单价
+            price += this.infoData.seat_infos.org_settle_price;
+
+            // 基建燃油费
+            price += this.infoData.airport_tax_audlet;
+
+            // 保险
+            price += this.form.insurances.length * 30;
+
+            // 人数
+            price *= this.form.users.length;
+
+            this.$store.commit("air/setAllPrice", price);
+      }
+  },
   mounted() {
     const { id, seat_xid } = this.$route.query;
     this.$axios({
@@ -97,6 +118,7 @@ export default {
     }).then(res => {
       console.log(res.data);
       this.infoData = res.data;
+      this.$store.commit('air/setInfoData',this.infoData)
     });
   },
   methods: {

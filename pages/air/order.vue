@@ -8,7 +8,7 @@
 
             <!-- 侧边栏 -->
             <div class="aside">
-                          
+                <OrderAside :data="$store.state.air.infoData"/>
             </div>
         </el-row>
     </div>
@@ -16,6 +16,7 @@
 
 <script>
 import OrderForm from "@/components/air/orderForm.vue";
+import OrderAside from "@/components/air/orderAside.vue";
 export default {
     data(){
       return{
@@ -23,7 +24,8 @@ export default {
       }
     },
     components:{
-      OrderForm
+      OrderForm,
+      OrderAside
     }
 }
 </script>
