@@ -2,8 +2,9 @@
   <div class="correlation">
     <h4>酒店 > 南京市酒店预订</h4>
     <!-- 筛选 -->
-    <div>
+    <div class="screen">
       <Screen/>
+     
     </div>
   </div>
 </template>
@@ -29,6 +30,9 @@ export default {
         font-weight: 400;
     color: #606266;
     cursor: text;
+  }
+  .screen{
+    margin-top:20px;
   }
 }
 </style>

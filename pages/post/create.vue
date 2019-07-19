@@ -42,6 +42,7 @@ let VueEditor;
 if (process.browser) {
     VueEditor = require('vue-word-editor').default
 }
+
 import moment from "moment";
 import Draft from "@/components/post/draft.vue";
 export default {
