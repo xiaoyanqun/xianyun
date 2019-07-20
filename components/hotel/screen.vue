@@ -3,7 +3,13 @@
     <el-form ref="form" :model="form">
       <el-row type="flex">
         <el-form-item>
-          <el-input v-model="form.destination" placeholder="目的地"></el-input>
+          <el-autocomplete
+          v-model="form.destination"
+          :fetch-suggestions="queryDepartSearch"
+          placeholder="目的地"
+          @select="handleDepartSelect"
+          class="el-autocomplete"
+        ></el-autocomplete>
         </el-form-item>
         <el-form-item>
           <el-date-picker
@@ -15,55 +21,90 @@
           ></el-date-picker>
         </el-form-item>
         <el-form-item>
-          <el-input 
-            @click.native="addnumber"
+          <el-popover  ref="popover4" class="popover" trigger="click">
+            <div class="numberList">
+              <el-row
+                type="flex"
+                class="numberList1"
+                style="padding-bottom: 20px;
+        border-bottom: 1px solid #ddd;
+        margin-bottom:30px;"
+              >
+                <span style="display: block;
+        margin-right: 70px;">每间</span>
+                <el-select
+                  class="adult_child"
+                  v-model="adult"
+                  placeholder="请选择"
+                  style="margin-left: 5px;
+        width: 93px ;
+        height: 28px;"
+                >
+                  <el-option
+                    v-for="item in adultlist"
+                    :key="item.value"
+                    :label="item.value"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+                <el-select
+                  class="adult_child"
+                  v-model="child"
+                  placeholder="请选择"
+                  style="margin-left: 5px;
+        width: 93px ;
+        height: 28px;"
+                >
+                  <el-option
+                    v-for="item in childList"
+                    :key="item.value"
+                    :label="item.value"
+                    :value="item.value"
+                  ></el-option>
+                </el-select>
+              </el-row>
+              <el-button
+                style="  position: absolute;
+        right: 10px;
+        bottom: 8px;
+        width: 30px;
+        height: 12px;
+        font-size: 12px;
+              text-align: center"
+                @click="affirm"
+                class="btn1"
+                type="primary"
+              >确认</el-button>
+            </div>
+          </el-popover>
+          <el-input
+            v-popover:popover4
             class="number"
             placeholder="请输入内容"
             suffix-icon="el-input__icon iconfont iconuser"
-            value=""
+            :value ="form.number"
           ></el-input>
-          <div class="numberList" v-show="isShow">
-            <el-row type="flex" class="numberList1">
-              <span>每间</span>
-              <el-select class="adult_child" v-model="adult" placeholder="请选择">
-                <el-option
-                  v-for="item in adultlist"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-              <el-select class="adult_child" v-model="child" placeholder="请选择">
-                <el-option
-                  v-for="item in childList"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value"
-                ></el-option>
-              </el-select>
-            </el-row>
-            <el-button @click="isShow=false" class="btn1" type="primary" >确认</el-button>
-          </div>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="btn">查看价格</el-button>
+          <el-button style type="primary" class="btn" @click="examine" >查看价格</el-button>
         </el-form-item>
       </el-row>
     </el-form>
   </div>
 </template>
 <script>
+import moment from "moment";
 export default {
   data() {
     return {
-      isShow:false,
       form: {
+        departCode:'',
         date: "",
-        destination: "",
+        destination: "南京市",
         number: ""
       },
-      adult:'',
-      child:"",
+      adult: "2 成人",
+      child: "0 儿童",
       adultlist: [
         {
           value: "1 成人",
@@ -111,11 +152,57 @@ export default {
     };
   },
   methods: {
-    addnumber(){
-      this.isShow = true
-    }
+   
+    // 选择人数
+    affirm() {
+      if(parseInt(this.child) === 0){
+        this.form.number = this.adult
+      }else{
+        this.form.number = this.adult +" " + this.child
+      }
+      this.$refs.popover4.doClose()
+    },
+    // 查看价格
+    examine(){
+
+       const enter = moment(this.form.date[0]).format("YYYY-MM-DD")
+       const left =  moment(this.form.date[1]).format("YYYY-MM-DD")
+       this.form.date =  [enter,left]
+      console.log(this.form)
+    },
+    // 出发城市下拉选择时触发
+    handleDepartSelect(item) {
+      this.form.departCode = item.sort;
+    this.form.destination = item.value;
+    },
+     // value 是选中的值，cb是回调函数，接收要展示的列.
+     queryDepartSearch(value, cb) {
+       if (value === "") {
+          cb([]);
+          return;
+        }
+        this.$axios({
+          url: "/airs/city",
+          params: { name: value }
+        }).then(res => {
+          console.log(res);
+          const val = res.data.data.map(v => {
+            v.value = v.name
+            return v;
+          });
+          cb(val);
+        this.form.destination = val[0].value;
+        this.form.departCode = val[0].sort;
+        });
+    },
   },
   mounted() {
+    this.$axios({
+      url: "/airs/city",
+      params: { name: this.form.destination }
+    }).then(res=>{
+      this.form.departCode = res.data.data[0].sort;
+    })
   }
 };
 </script>
@@ -124,62 +211,29 @@ export default {
   /deep/.el-form-item__content {
     margin-right: 10px;
   }
-  .number{
+  .number {
     width: 200px;
-    /deep/.el-input__inner{
- width: 200px;
-    }
-   
-  }
-  .numberList {
-    position: absolute;
-    z-index: 999;
-    margin-top: 10px;
-    .numberList1{
-      padding-bottom: 20px;
-      border-bottom: 1px solid #ddd;
-    }
-    .btn1{
-      position:absolute;
-      right: 10px;
-      bottom: 8px;
-      width: 30px;
-      height: 12px;
-      font-size: 12px;
-      /deep/span{
-        display:block;
-        margin: -4px -10px;
-      }
-    }
-    span{
-      display: block;
-      margin-right: 70px;
-    }
-        background: #fff;
-    min-width: 150px;
-    border: 1px solid #ebeef5;
-    padding: 12px;
-    color: #606266;
-    // text-align: justify;
-    font-size: 14px;
-    box-shadow: 0 2px 12px 0 rgba(0,0,0,.1);
-    width: 300px;
-    height: 97px;
-    padding: 12px;
-    .adult_child {
-      margin-left: 5px;
-      width: 93px;
-      height: 28px;
-      /deep/.el-input__inner {
-        height: 28px;
-      }
+    /deep/.el-input__inner {
+      width: 200px;
     }
   }
-
   .btn {
     width: 86px;
     height: 40px;
     font-size: 12px;
+  }
+}
+
+/deep/.btn1 {
+  position: absolute;
+  right: 10px;
+  bottom: 8px;
+  width: 30px;
+  height: 12px;
+  font-size: 12px;
+  /deep/span {
+    display: block;
+    margin: -4px -10px;
   }
 }
 </style>
