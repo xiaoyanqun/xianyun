@@ -59,7 +59,7 @@
               </template>
             </el-input>
           </el-form-item>
-            <input type="hidden" :value="allPrice"/>
+          <input type="hidden" :value="allPrice" />
           <el-form-item label="验证码">
             <el-input v-model="form.captcha"></el-input>
           </el-form-item>
@@ -75,40 +75,40 @@ export default {
   data() {
     return {
       form: {
-        users: [{ username: "", id: "" }],  //乘车人集合
-        insurances: [],  //保险集合
-        contactName: "",   //联系人名字
-        contactPhone: "",   //联系人电话
-        invoice: false,     //是否需要发票
-        seat_xid: "",       //作为id
-        air: "",       //航班id
-        captcha: ""     //验证码
+        users: [{ username: "", id: "" }], //乘车人集合
+        insurances: [], //保险集合
+        contactName: "", //联系人名字
+        contactPhone: "", //联系人电话
+        invoice: false, //是否需要发票
+        seat_xid: "", //作为id
+        air: "", //航班id
+        captcha: "" //验证码
       },
       infoData: {
         insurances: []
       } // 机票信息数据
     };
   },
-  computed:{
-      allPrice(){
-            let price = 0;
+  computed: {
+    allPrice() {
+      let price = 0;
 
-            if(!this.infoData.airport_tax_audlet)  return 0;
+      if (!this.infoData.airport_tax_audlet) return 0;
 
-            // 机票单价
-            price += this.infoData.seat_infos.org_settle_price;
+      // 机票单价
+      price += this.infoData.seat_infos.org_settle_price;
 
-            // 基建燃油费
-            price += this.infoData.airport_tax_audlet;
+      // 基建燃油费
+      price += this.infoData.airport_tax_audlet;
 
-            // 保险
-            price += this.form.insurances.length * 30;
+      // 保险
+      price += this.form.insurances.length * 30;
 
-            // 人数
-            price *= this.form.users.length;
+      // 人数
+      price *= this.form.users.length;
 
-            this.$store.commit("air/setAllPrice", price);
-      }
+      this.$store.commit("air/setAllPrice", price);
+    }
   },
   mounted() {
     const { id, seat_xid } = this.$route.query;
@@ -118,7 +118,7 @@ export default {
     }).then(res => {
       console.log(res.data);
       this.infoData = res.data;
-      this.$store.commit('air/setInfoData',this.infoData)
+      this.$store.commit("air/setInfoData", this.infoData);
     });
   },
   methods: {
@@ -147,31 +147,31 @@ export default {
 
     // 发送手机验证码
     handleSendCaptcha() {
-        this.$store.dispatch('user/verification',this.form.contactPhone)
+      this.$store.dispatch("user/verification", this.form.contactPhone);
     },
 
     // 提交订单
     handleSubmit() {
-        this.form.air = this.$route.query.id
-        this.form.seat_xid = this.$route.query.seat_xid
-        const rules = {
-                users: {
-                    value: this.form.users[0].username && this.form.users[0].id,
-                    message: "乘机人不能为空"
-                },
-                contactName: {
-                    value: this.form.contactName,
-                    message: "请输入联系人"
-                },
-                contactPhone: {
-                    value: this.form.contactPhone,
-                    message: "请输入手机号码"
-                },
-                captcha: {
-                    value: this.form.captcha,
-                    message: "请输入验证码"
-                }
-            };
+      this.form.air = this.$route.query.id;
+      this.form.seat_xid = this.$route.query.seat_xid;
+      const rules = {
+        users: {
+          value: this.form.users[0].username && this.form.users[0].id,
+          message: "乘机人不能为空"
+        },
+        contactName: {
+          value: this.form.contactName,
+          message: "请输入联系人"
+        },
+        contactPhone: {
+          value: this.form.contactPhone,
+          message: "请输入手机号码"
+        },
+        captcha: {
+          value: this.form.captcha,
+          message: "请输入验证码"
+        }
+      };
       let flag = true;
       Object.keys(rules).forEach(v => {
         if (!flag) return;
@@ -180,7 +180,7 @@ export default {
           this.$message.warning(rules[v].message);
         }
       });
-    if (flag) {
+      if (flag) {
         const token = this.$store.state.user.userInfo.token;
         this.$axios({
           url: "/airorders",
@@ -191,7 +191,10 @@ export default {
           }
         }).then(res => {
           console.log(res);
-          this.$message.success("订单提交成功")
+          this.$message.success("订单提交成功");
+          const {id} = res.data.data
+          console.log(id)
+          this.$router.push({ path: "/air/pay", query: { id } });
         });
       }
     }

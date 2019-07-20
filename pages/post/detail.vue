@@ -1,11 +1,12 @@
 <template>
   <div class="container">
     <el-row type="flex" class="container-a">
-      <dir class="left">
+      <div class="left">
         <!-- 文章区域 -->
         <Detailpost />
         <!-- 评论 -->
-      </dir>
+        <Detailcomment />
+      </div>
       <!-- 相关攻略 -->
       <div class="right">
         <DetailCorrelation />
@@ -15,6 +16,7 @@
 </template>
 <script>
 import Detailpost from "@/components/post/detail-post.vue";
+import Detailcomment from "@/components/post/detail-comment.vue";
 import DetailCorrelation from "@/components/post/detail-correlation.vue";
 export default {
   data() {
@@ -22,7 +24,8 @@ export default {
   },
   components: {
     Detailpost,
-    DetailCorrelation
+    DetailCorrelation,
+    Detailcomment
   }
 };
 </script>

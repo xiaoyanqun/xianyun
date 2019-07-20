@@ -39,7 +39,7 @@
 export default {
   data() {
     return {
-      isShow: false,
+      
       currentTab: -1,
       cityList: []
     };
@@ -50,10 +50,10 @@ export default {
     },
     handleChangeTab(value) {
       this.currentTab = value;
-      this.isShow = true;
+      
     },
     handleTab() {
-      (this.currentTab = -1), (this.isShow = false);
+      this.currentTab = -1
     }
   },
   mounted() {
