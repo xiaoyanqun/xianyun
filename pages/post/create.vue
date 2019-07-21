@@ -115,6 +115,7 @@ export default {
     // 发布游记
     add() {
       this.addform.content = this.$refs.vueEditor.editor.root.innerHTML
+     
       const rules = {
         title: {
           value: this.addform.title,
@@ -183,24 +184,29 @@ export default {
     },
     // 保存到草稿
     postsdraft() {
+      this.addform.content = this.$refs.vueEditor.editor.root.innerHTML
       this.time = moment(new Date()).format("YYYY-MM-DD");
       const arr = JSON.parse(window.localStorage.getItem("posts")) || [];
-      if (arr.lenght > 5) {
-        arr.lenght = 5;
+      if (arr.length > 5) {
+        console.log(1)
+        arr.length = 4;
       }
       arr.unshift({
         time: this.time,
         cityName: this.cityName,
         ...this.addform
       });
+     
       window.localStorage.setItem("posts", JSON.stringify(arr));
       const arr2 = JSON.parse(window.localStorage.getItem("posts"));
       this.$refs.draft.show(arr2);
     },
     //编辑草稿
     edit(arr) {
+      
       this.cityName = arr.cityName;
       this.addform.content = arr.content;
+      this.$refs.vueEditor.editor.root.innerHTML = this.addform.content
       this.addform.title = arr.title;
       this.time = arr.time;
       this.addform.city = arr.city;
