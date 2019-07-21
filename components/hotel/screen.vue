@@ -214,12 +214,13 @@
         </el-col>
         <el-col :span="6" class="item">
           <span>酒店品牌</span>
-          <el-dropdown style="width:146px;">
+          <el-dropdown style="width:146px " >
             <span class="el-dropdown-link">
               不限
               <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
             </span>
-            <el-dropdown-menu slot="dropdown" >
+            <el-dropdown-menu slot="dropdown" style="height: 150px;
+    overflow: scroll;">
               <el-dropdown-item style="width:130px;"  v-for="(item,index) in classify.brands" :key="index">
                 <i class="iconfont iconcircle"></i>
                 <span>{{item.name}}</span>
@@ -349,13 +350,13 @@ export default {
     }
   },
   mounted() {
+    // 酒店选项
     this.$axios({
       url:'/hotels/options'
     }).then(res=>{
       console.log(res.data.data)
       this.classify = res.data.data
     })
-    this.$router.push("/hotel/?city=74");
     // 酒店大概地址
     this.$axios({
       url: "http://157.122.54.189:9095/hotels",

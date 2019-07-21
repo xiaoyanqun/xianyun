@@ -6,8 +6,9 @@
       <Screen/>
      
     </div>
+    <!-- 酒店列表 -->
     <div class="hotellist">
-      <HotelList/>
+      <HotelList v-for="(item,index) in houstList" :data="item" :key="index"/>
     </div>
   </div>
 </template>
@@ -17,8 +18,18 @@ import HotelList from '@/components/hotel/hotel-list';
 export default {
   data(){
     return {
-
+        houstList:[]
     }
+  },
+  mounted(){
+    this.$router.push("/hotel/?city=74");
+    this.$axios({
+      url: "http://157.122.54.189:9095/hotels",
+      params: { city: this.$route.query.city }
+    }).then(res => {
+      this.houstList = res.data.data;
+      console.log(this.houstList)
+    });
   },
   components:{
     Screen,
@@ -32,7 +43,7 @@ export default {
   margin: 0 auto;
   margin-top: 20px;
   h4 {
-        font-weight: 400;
+    font-weight: 400;
     color: #606266;
     cursor: text;
   }
