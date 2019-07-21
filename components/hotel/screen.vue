@@ -158,6 +158,77 @@
         </el-col>
       </el-row>
     </div>
+    <div class="houstoscreen">
+      <el-row type="flex">
+        <el-col :span="8" class="item">
+          <el-row type="flex" justify="space-between">
+            <span class="demonstration">价格</span>
+          <span class="demonstration">0-4000</span>
+          </el-row>
+          <el-slider v-model="val" :max="4000"></el-slider>
+        </el-col>
+        <el-col :span="6" class="item">
+          <span>住宿等级</span>
+          <el-dropdown style="width:146px;">
+            <span class="el-dropdown-link">
+              不限
+              <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown" >
+              <el-dropdown-item style="width:130px;" v-for="(item,index) in classify.levels" :key="index">
+                <i class="iconfont iconcircle"></i>
+                <span>{{item.name}}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+        <el-col :span="6" class="item" >
+         <span>住宿类型</span>
+          <el-dropdown style="width:146px;">
+            <span class="el-dropdown-link">
+              不限
+              <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown" >
+              <el-dropdown-item style="width:130px;" v-for="(item,index) in classify.types" :key="index">
+                <i class="iconfont iconcircle"></i>
+                <span>{{item.name}}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+        <el-col :span="6" class="item" >
+           <span>酒店设施</span>
+          <el-dropdown style="width:146px;">
+            <span class="el-dropdown-link">
+              不限
+              <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown" >
+              <el-dropdown-item style="width:130px;" v-for="(item,index) in classify.assets" :key="index">
+                <i class="iconfont iconcircle"></i>
+                <span>{{item.name}}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+        <el-col :span="6" class="item">
+          <span>酒店品牌</span>
+          <el-dropdown style="width:146px;">
+            <span class="el-dropdown-link">
+              不限
+              <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown" >
+              <el-dropdown-item style="width:130px;"  v-for="(item,index) in classify.brands" :key="index">
+                <i class="iconfont iconcircle"></i>
+                <span>{{item.name}}</span>
+              </el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </el-col>
+      </el-row>
+    </div>
   </div>
 </template>
 <script>
@@ -165,6 +236,8 @@ import moment from "moment";
 export default {
   data() {
     return {
+      classify:{},
+      val:4000,
       houstList: [],
       // 下拉图标
       iconshow: true,
@@ -240,12 +313,12 @@ export default {
       const enter = moment(this.form.date[0]).format("YYYY-MM-DD");
       const left = moment(this.form.date[1]).format("YYYY-MM-DD");
       this.form.date = [enter, left];
-      console.log(this.form);
     },
     // 出发城市下拉选择时触发
     handleDepartSelect(item) {
       this.form.departCode = item.sort;
       this.form.destination = item.value;
+      this.init();
     },
     // value 是选中的值，cb是回调函数，接收要展示的列.
     queryDepartSearch(value, cb) {
@@ -257,7 +330,6 @@ export default {
         url: "/airs/city",
         params: { name: value }
       }).then(res => {
-        console.log(res);
         const val = res.data.data.map(v => {
           v.value = v.name;
           return v;
@@ -266,24 +338,39 @@ export default {
         this.form.destination = val[0].value;
         this.form.departCode = val[0].sort;
       });
+    },
+    init() {
+      this.$axios({
+        url: "http://157.122.54.189:9095/cities",
+        params: { name: this.form.destination }
+      }).then(res => {
+        this.data = res.data.data[0];
+      });
     }
   },
   mounted() {
+    this.$axios({
+      url:'/hotels/options'
+    }).then(res=>{
+      console.log(res.data.data)
+      this.classify = res.data.data
+    })
     this.$router.push("/hotel/?city=74");
+    // 酒店大概地址
     this.$axios({
       url: "http://157.122.54.189:9095/hotels",
       params: { city: this.$route.query.city }
     }).then(res => {
-      console.log(res);
       this.houstList = res.data.data;
     });
     const _this = this;
+    // 地图
     window.onLoad = function() {
       // 等待页面加载完成之后才执行
       // container是页面的div容器
       var map = new AMap.Map("container", {
         zoom: 11, //级别
-        center: [118.78 , 32.07], //中心点坐标
+        center: [118.78, 32.07], //中心点坐标
         viewMode: "3D" //使用3D视图
       });
 
@@ -291,8 +378,9 @@ export default {
       console.log(_this.houstList);
       const arr = [];
       _this.houstList.forEach((item, index) => {
-        arr.push(new AMap.Marker({
-          content: `<div style="display: inline-block;
+        arr.push(
+          new AMap.Marker({
+            content: `<div style="display: inline-block;
                 width: 22px;
                 height: 36px;
                 background-image: url(https://webapi.amap.com/theme/v1.3/markers/b/mark_b.png);
@@ -300,13 +388,14 @@ export default {
                 text-align: center;
                 line-height: 24px;
                 color: #fff;">${index + 1}</div>`,
-          position: new AMap.LngLat(
-            item.location.longitude,
-            item.location.latitude
-          ), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-          title: "北京"
-        }))
-      })
+            position: new AMap.LngLat(
+              item.location.longitude,
+              item.location.latitude
+            ), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+            title: "北京"
+          })
+        );
+      });
 
       // 将创建的点标记添加到已有的地图实例：
       map.add(arr);
@@ -327,18 +416,13 @@ export default {
       this.form.departCode = res.data.data[0].sort;
     });
 
-    this.$axios({
-      url: "http://157.122.54.189:9095/cities",
-      params: { name: this.form.destination }
-    }).then(res => {
-      this.data = res.data.data[0];
-      console.log(this.data);
-    });
+    this.init();
   }
 };
 </script>
 <style lang="less" scoped>
 .location {
+  margin-bottom: 20px;
   .locationleft {
     padding-right: 20px;
   }
@@ -410,6 +494,28 @@ export default {
     width: 86px;
     height: 40px;
     font-size: 12px;
+  }
+}
+.houstoscreen{
+  border:1px solid #ddd;
+  padding:5px 0;
+  .item{
+    padding:0 20px 0 20px;
+    border-right: 1px solid #ddd;
+    /deep/.el-dropdown{
+      margin-top: 10px;
+    }
+    span{
+          display: block;
+          font-size: 14px;
+          color:#666;
+    }
+    /deep/.el-dropdown-link{
+      font-size: 12px;
+    }
+  }
+  .item:nth-child(5) {
+    border-right:none;
   }
 }
 

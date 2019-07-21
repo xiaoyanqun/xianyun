@@ -6,10 +6,14 @@
       <Screen/>
      
     </div>
+    <div class="hotellist">
+      <HotelList/>
+    </div>
   </div>
 </template>
 <script>
-import Screen from '@/components/hotel/screen'
+import Screen from '@/components/hotel/screen';
+import HotelList from '@/components/hotel/hotel-list';
 export default {
   data(){
     return {
@@ -17,7 +21,8 @@ export default {
     }
   },
   components:{
-    Screen
+    Screen,
+    HotelList
   }
 };
 </script>

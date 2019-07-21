@@ -8,14 +8,15 @@
       </div>
       <div class="post-text">
         <div class="title">{{item.title}}</div>
-        <p>2019-07-18 6:17 阅读 {{item.watch}}</p>
+        <p>{{ item.updated_at }} 阅读 {{item.watch}}</p>
       </div>
     </el-row>
     </nuxt-link>
-   
+  
   </div>
 </template>
 <script>
+import moment from "moment";
 export default {
   data(){
     return{
@@ -27,7 +28,12 @@ export default {
       url:"/posts/recommend"
     }).then(res=>{
       this.data = res.data.data
-      console.log(this.data)
+      const arr = this.data.map(v=>{
+        var a = moment(v.updated_at).format("YYYY-MM-DD HH:mm")
+        v.updated_at = a
+        return v
+      })
+      this.data = arr
     })
   }
 };
