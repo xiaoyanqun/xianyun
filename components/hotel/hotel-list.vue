@@ -2,19 +2,22 @@
   <div class="hotel-item">
     <el-row type="flex">
       <el-col class="item" :span="8">
-        <nuxt-link to="/hotel/1.html">
+        <div @click="h4click(data.id)">
           <img style="width:100%;height:210px" :src="data.photos" alt />
-        </nuxt-link>
+        </div>
+          
       </el-col>
       <el-col class="item" :span="10">
-        <h4>
-          <nuxt-link to="/hotel/1.html">{{data.name}}</nuxt-link>
+        <h4 @click="h4click(data.id)">
+          {{data.name}}
         </h4>
         <div class="hotel-en-name">
           <span>{{data.alias}}</span>
+         
+            <i class="iconfont iconhuangguan"></i>
           <i class="iconfont iconhuangguan"></i>
           <i class="iconfont iconhuangguan"></i>
-          <i class="iconfont iconhuangguan"></i>
+          
           {{data.hoteltype.name}}
         </div>
         <el-row type="flex" class="good">
@@ -66,11 +69,17 @@ export default {
   props: {
     data: {
       type: Object,
-      default: {}
+      default: {
+      }
     }
   },
   data() {
     return {};
+  },
+  methods:{
+    h4click(id){
+    this.$router.push(`/hotel/hotel-particulars?id=${id}`)
+  },
   },
   mounted() {
     console.log(this.data);
