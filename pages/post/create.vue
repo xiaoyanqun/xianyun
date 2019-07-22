@@ -187,7 +187,7 @@ export default {
       this.addform.content = this.$refs.vueEditor.editor.root.innerHTML
       this.time = moment(new Date()).format("YYYY-MM-DD");
       const arr = JSON.parse(window.localStorage.getItem("posts")) || [];
-      if (arr.length > 5) {
+      if (arr.length >= 5) {
         console.log(1)
         arr.length = 4;
       }
@@ -196,9 +196,9 @@ export default {
         cityName: this.cityName,
         ...this.addform
       });
-     
       window.localStorage.setItem("posts", JSON.stringify(arr));
       const arr2 = JSON.parse(window.localStorage.getItem("posts"));
+      console.log(arr2)
       this.$refs.draft.show(arr2);
     },
     //编辑草稿

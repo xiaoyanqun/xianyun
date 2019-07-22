@@ -98,17 +98,17 @@
               <el-col :span="3">区域：</el-col>
               <el-col :span="21" class="site">
                 <div :class="[{itemlist:iconshow},{itemlistxiala:!iconshow}]">
-                  <nuxt-link to="#" class="all">全部</nuxt-link>
-                  <nuxt-link to="#" v-for="(item,index) in data.scenics" :key="index">{{item.name}}</nuxt-link>
+                  <a link="javascript:;" @click="all" :class="{active:activeshow}">全部</a>
+                  <a link="javascript:;" @click="active(item.id)" :class="{active:activeindex == item.id}" v-for="(item,index) in data.scenics" :key="index">{{item.name}}</a>
                 </div>
                 <div class="pull-down" @click="iconshow = !iconshow">
-                  <nuxt-link to="#">
+                  <a link="javascript:;">
                     <i
                       class="el-icon-d-arrow-right"
                       :class="[{shangla:!iconshow},{xiala:iconshow}]"
                     ></i>
                     等{{data.scenics.length}}个区域
-                  </nuxt-link>
+                  </a>
                 </div>
               </el-col>
             </el-row>
@@ -165,17 +165,17 @@
             <span class="demonstration">价格</span>
           <span class="demonstration">0-4000</span>
           </el-row>
-          <el-slider v-model="val" :max="4000"></el-slider>
+          <el-slider @change="huakuai" v-model="val" :max="4000"></el-slider>
         </el-col>
         <el-col :span="6" class="item">
           <span>住宿等级</span>
-          <el-dropdown style="width:146px;">
+          <el-dropdown style="width:146px;" @command="commandGrade">
             <span class="el-dropdown-link">
-              不限
+              {{grade}}
               <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
             </span>
-            <el-dropdown-menu slot="dropdown" >
-              <el-dropdown-item style="width:130px;" v-for="(item,index) in classify.levels" :key="index">
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item :command="item" style="width:130px;" v-for="(item,index) in classify.levels" :key="index">
                 <i class="iconfont iconcircle"></i>
                 <span>{{item.name}}</span>
               </el-dropdown-item>
@@ -184,13 +184,13 @@
         </el-col>
         <el-col :span="6" class="item" >
          <span>住宿类型</span>
-          <el-dropdown style="width:146px;">
+          <el-dropdown style="width:146px;"  @command="commandType">
             <span class="el-dropdown-link">
-              不限
+              {{types}}
               <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
             </span>
             <el-dropdown-menu slot="dropdown" >
-              <el-dropdown-item style="width:130px;" v-for="(item,index) in classify.types" :key="index">
+              <el-dropdown-item :command="item"  style="width:130px;" v-for="(item,index) in classify.types" :key="index">
                 <i class="iconfont iconcircle"></i>
                 <span>{{item.name}}</span>
               </el-dropdown-item>
@@ -199,13 +199,13 @@
         </el-col>
         <el-col :span="6" class="item" >
            <span>酒店设施</span>
-          <el-dropdown style="width:146px;">
+          <el-dropdown style="width:146px;" @command="commandfacilities">
             <span class="el-dropdown-link">
-              不限
+              {{facilities}}
               <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
             </span>
             <el-dropdown-menu slot="dropdown" >
-              <el-dropdown-item style="width:130px;" v-for="(item,index) in classify.assets" :key="index">
+              <el-dropdown-item :command="item" style="width:130px;" v-for="(item,index) in classify.assets" :key="index">
                 <i class="iconfont iconcircle"></i>
                 <span>{{item.name}}</span>
               </el-dropdown-item>
@@ -214,14 +214,14 @@
         </el-col>
         <el-col :span="6" class="item">
           <span>酒店品牌</span>
-          <el-dropdown style="width:146px " >
+          <el-dropdown style="width:146px " @command="commandbrand" >
             <span class="el-dropdown-link">
-              不限
+              {{brand}}
               <i class="el-icon-arrow-down el-icon--right" style="float:right;"></i>
             </span>
             <el-dropdown-menu slot="dropdown" style="height: 150px;
     overflow: scroll;">
-              <el-dropdown-item style="width:130px;"  v-for="(item,index) in classify.brands" :key="index">
+              <el-dropdown-item :command="item" style="width:130px;"  v-for="(item,index) in classify.brands" :key="index">
                 <i class="iconfont iconcircle"></i>
                 <span>{{item.name}}</span>
               </el-dropdown-item>
@@ -237,8 +237,18 @@ import moment from "moment";
 export default {
   data() {
     return {
-      classify:{},
-      val:4000,
+      // 品牌
+      brand:'不限',
+      // 酒店设施
+      facilities:'不限',
+      // 住宿类型
+      types:'不限',
+      // 等级数据
+      grade:'不限',
+      activeshow:true,  //全部按键显示
+      activeindex:0,   //a标签点击
+      classify:{},   
+      val:4000,   
       houstList: [],
       // 下拉图标
       iconshow: true,
@@ -300,6 +310,94 @@ export default {
     };
   },
   methods: {
+    // 酒店类型
+    commandType(item){
+      if(this.types == item.name){
+        this.types = '不限'
+      }else{
+        this.types = item.name
+      }
+      console.log(this.$route.query.hoteltype)
+       if( item.id === this.$route.query.hoteltype){
+          const {hoteltype,...query} = this.$route.query
+          this.$router.push({path:`/hotel`,query})
+       }else{
+         this.$router.push({path:`/hotel`,query:{...this.$route.query,hoteltype: item.id}})
+       }
+      
+    },
+    // 酒店设施
+    commandfacilities(item){
+      if(this.facilities == item.name){
+        this.facilities = '不限'
+      }else{
+        this.facilities = item.name
+      }
+      if( item.id === this.$route.query.hotelasset){
+          const {hotelasset,...query} = this.$route.query
+          this.$router.push({path:`/hotel`,query})
+       }else{
+         this.$router.push({path:`/hotel`,query:{...this.$route.query,hotelasset: item.id}})
+       }
+    },
+    // 酒店品牌
+    commandbrand(item){
+       if(this.brand == item.name){
+        this.brand = '不限'
+      }else{
+        this.brand = item.name
+      }
+      if( item.id === this.$route.query.hotelbrand){
+          const {hotelbrand,...query} = this.$route.query
+          this.$router.push({path:`/hotel`,query})
+       }else{
+         this.$router.push({path:`/hotel`,query:{...this.$route.query,hotelbrand: item.id}})
+       }
+    },
+    // 等级
+    commandGrade(item){
+      if(this.grade == item.name){
+        this.grade = '不限'
+      }else{
+        this.grade = item.name
+      }
+      
+      // const index = this.grade.indexOf(item)
+      // console.log(index)
+      // if(index > -1){
+      //   this.grade.splice(index,1)
+      // }
+      // if(index == -1){
+      //   this.grade.push(item)
+      // }
+      // const arr = this.grade.map(v=>{
+      //   return 'hotellevel_in='+v
+      // })
+      if(item === this.$route.query.hotellevel_in){
+          const {hotellevel_in,...query} = this.$route.query
+          this.$router.push({path:`/hotel`,query})
+       }else{
+         this.$router.push({path:`/hotel`,query:{...this.$route.query,hotellevel_in:item}})
+       }
+    },
+    // 滑块
+    huakuai(val){
+      console.log(val)
+       this.$router.push({path:'/hotel',query:{...this.$route.query,price_lt:val}})
+    },
+    // 点击全部
+    all(){
+      this.activeshow = true,
+      this.activeindex=0
+      const {scenic,...query} =  this.$route.query
+      this.$router.push({path:'/hotel',query})
+    },
+    // 点击区域
+    active(id){
+      this.activeshow = false
+    this.activeindex = id
+      this.$router.push({path:'/hotel',query:{...this.$route.query,scenic:id}})
+    },
     // 选择人数
     affirm() {
       if (parseInt(this.child) === 0) {
@@ -457,7 +555,7 @@ export default {
       transform: rotate(90deg);
       color: #f90;
     }
-    a.all {
+    .active {
       background: #eee;
       cursor: auto;
       text-decoration: none;
