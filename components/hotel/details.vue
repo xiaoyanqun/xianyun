@@ -56,7 +56,7 @@
     <el-table :data="hotelData" style="width: 100%">
       <el-table-column prop="name" label="价格来源" width="420"></el-table-column>
       <el-table-column prop="bestType" label="低价房型" width="420"></el-table-column>
-      <el-table-column prop="price" label="最低价格/每晚"></el-table-column>
+      <el-table-column prop="prices" label="最低价格/每晚"></el-table-column>
     </el-table>
   </div>
 </template>
@@ -120,6 +120,12 @@ export default {
   mounted() {
     window.setTimeout(v => {
       this.hotelData = this.data.products;
+      console.log(this.hotelData)
+      const arr = this.hotelData.map(v=>{
+        v.prices = v.price +"起 >"
+        return v
+      })
+      this.hotelData = arr
     }, 3000);
   }
 };

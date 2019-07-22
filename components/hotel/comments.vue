@@ -7,68 +7,102 @@
     <div class="comments1">
       <el-row type="flex">
         <el-col :span="4">
-          <span class="getComments">总评数:1</span>
-          <span class="getComments">好评数:0</span>
-          <span class="getComments">差评数:0</span>
+          <span class="getComments">总评数:{{data.all_remarks}}</span>
+          <span class="getComments">好评数:{{data.good_remarks}}</span>
+          <span class="getComments">差评数:{{data.bad_remarks}}</span>
         </el-col>
-            <el-col :span="5" class="myComments">
-              <div class="addComments">
-                <div class="getIcon">
-                  <span class="el-icon-star-on"></span>
-                  <span class="el-icon-star-on"></span>
-                  <span class="el-icon-star-on"></span>
-                  <span class="el-icon-star-on"></span>
-                  <span class="el-icon-star-on"></span>
-                  <span>3.5分</span>
-                </div>
-                <div class="tuiJian">推荐</div>
-              </div>
-            </el-col>
-            <el-col :span="3">
-              <div class="progress">
-                <el-progress color="orange" type="circle" :width="75" :stroke-width="2" :show-text="false" :percentage="75"></el-progress>
-                <div class="progress1">
-                  <span>环境</span>
-                  <span>7.8</span>
-                </div>
-              </div>
-            </el-col>
-            <el-col :span="3">
-              <div class="progress">
-                <el-progress color="orange" type="circle" :width="75" :stroke-width="2" :show-text="false" :percentage="75"></el-progress>
-                <div class="progress1">
-                  <span>产品</span>
-                  <span>7.7</span>
-                </div>
-              </div>
-            </el-col>
-            <el-col :span="3">
-              <div class="progress">
-                <el-progress color="orange" type="circle" :width="75" :stroke-width="2" :show-text="false" :percentage="75"></el-progress>
-                <div class="progress1">
-                  <span>服务</span>
-                  <span>7.7</span>
-                </div>
-              </div>
-            </el-col>
-          </el-row>
+        <el-col :span="5" class="myComments">
+          <div class="addComments">
+            <div class="getIcon">
+              <el-rate
+                :value="data.stars"
+                disabled
+                show-score
+                text-color="#ff9900"
+              ></el-rate>    
+            </div>
+            <div class="tuiJian">推荐</div>
+          </div>
+        </el-col>
+        <el-col :span="3">
+          <div class="progress">
+            <el-progress
+              color="orange"
+              type="circle"
+              :width="75"
+              :stroke-width="2"
+              :show-text="false"
+              :percentage="75"
+            ></el-progress>
+            <div class="progress1">
+              <span>环境</span>
+              <span>{{data.scores.environment}}</span>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="3">
+          <div class="progress">
+            <el-progress
+              color="orange"
+              type="circle"
+              :width="75"
+              :stroke-width="2"
+              :show-text="false"
+              :percentage="75"
+            ></el-progress>
+            <div class="progress1">
+              <span>产品</span>
+              <span>{{data.scores.product}}</span>
+            </div>
+          </div>
+        </el-col>
+        <el-col :span="3">
+          <div class="progress">
+            <el-progress
+              color="orange"
+              type="circle"
+              :width="75"
+              :stroke-width="2"
+              :show-text="false"
+              :percentage="75"
+            ></el-progress>
+            <div class="progress1">
+              <span>服务</span>
+              <span>{{data.scores.service}}</span>
+            </div>
+          </div>
+        </el-col>
+      </el-row>
     </div>
   </div>
 </template>
 <script>
 export default {
-  props:{
-    data:{
-      type:Object,
-      default:{}
+  props: {
+    list: {
+      type: Object,
+      default: {
+        scores: {}
+      }
+    }
+  }, 
+  data(){
+    return{
+      data:{
+        scores: {}
+      }
     }
   },
+  mounted(){
+    window.setTimeout(v=>{
+      this.data = this.list
+    },3000)
+  }
 };
 </script>
 <style lang="less" scoped>
 .userComments {
-  padding: 10px 0;
-  border-bottom: 1px dotted #666;
+
   .comments {
   }
   .comments1 {

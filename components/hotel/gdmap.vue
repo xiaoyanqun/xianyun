@@ -12,7 +12,7 @@
               <ul style="overflow:auto; max-height:300px;">
                 <li v-for="(item,index) in gdmap" :key="index" class="map_1">
                   <span>{{item.name}}</span>
-                  <!-- <i>{{item.distance}}</i> -->
+                  <i>{{item.distance}}</i>
                 </li>
               </ul>
             </div>
@@ -22,7 +22,7 @@
               <ul style="overflow:auto; max-height:300px;">
                 <li v-for="(item,index) in gdmap" :key="index" class="map_1">
                   <span>{{item.name}}</span>
-                  <!-- <i>{{item.distance}}</i> -->
+                  <i>{{item.distance}}</i>
                 </li>
               </ul>
             </div>
@@ -40,8 +40,8 @@
           <el-row class="hotel_time">
             <el-col :span="6">入住时间:14:00之后</el-col>
             <el-col :span="6">离店时间:12:00之前</el-col>
-            <el-col :span="6">2010年开业/2015年装修</el-col>
-            <el-col :span="6">酒店规模:148间客房</el-col>
+            <el-col :span="6">{{data.creation_time}}/{{data.renovat_time}}</el-col>
+            <el-col :span="6">酒店规模:{{data.roomCount}}间客房</el-col>
           </el-row>
         </el-col>
       </el-row>
@@ -50,10 +50,7 @@
           <div class="xinXi">主要信息</div>
         </el-col>
         <el-col :span="20" class="hotel_time">
-          <span class="hotel-item">外币兑换服务</span>
-          <span class="hotel-item">电梯</span>
-          <span class="hotel-item">洗衣服务</span>
-          <span class="hotel-item">热水壶</span>
+          <span v-for="(item,index) in data.hotelassets" :key="index" class="hotel-item">{{item.name}}</span>
         </el-col>
       </el-row>
       <el-row class="information1">
@@ -73,24 +70,22 @@
 </template>
 <script>
 export default {
-  props:{
-    data:{
-      type:Object,
-      default:{}
-    },
+  props: {
+    data: {
+      type: Object,
+      default: {}
+    }
   },
   data() {
     return {
-      location:0,
+      location: 0,
       mapName: "first",
       gdmap: []
     };
   },
   mounted() {
-    
-    window.onLoad = () =>{
-     this.init('风景名胜')
-    
+    window.onLoad = () => {
+      this.init("风景名胜");
     };
     var key = "3dfe099c810173f6b5207b7d09ffd889";
     var url = `https://webapi.amap.com/maps?v=1.4.15&key=${key}&callback=onLoad`;
@@ -101,42 +96,48 @@ export default {
   },
   methods: {
     handleClick(tab, event) {
-        console.log(tab.label)
-        if(tab.label == '交通'){
-          this.init('交通')
-        }
-        if(tab.label == '风景'){
-          this.init('风景名胜')
-        }
-      },
-      init(name){
-         console.log(this.data)
+      console.log(tab.label);
+      if (tab.label == "交通") {
+        this.init("交通");
+      }
+      if (tab.label == "风景") {
+        this.init("风景名胜");
+      }
+    },
+    init(name) {
+      console.log(this.data);
       this.$axios({
-        url:"https://restapi.amap.com/v3/place/text",
-        params:{
-          city:'南京',
-          location:this.data.location.longitude+','+this.data.location.latitude,
-          types:name,
-          output:'json',
-          page:1,
-          offset:10,
-          key: '79041dfa1c752f49599e2b507c64da42'
-        }
-      }).then(res=>{
-        this.gdmap = res.data.pois
+        url: "https://restapi.amap.com/v3/place/text",
+        params: {
+          city: "南京",
+          location:
+            this.data.location.longitude + "," + this.data.location.latitude,
+          types: name,
+          output: "json",
+          page: 1,
+          offset: 10,
+          key: "79041dfa1c752f49599e2b507c64da42"
+        }       
+      }).then(res => {
+        this.gdmap = res.data.pois;
         var map = new AMap.Map("container", {
-        zoom: 11, //级别
-        // center: [118.78, 32.07], //中心点坐标
-        viewMode: "3D" //使用3D视图
-      });
-      const arr = []
-      console.log(res.data.pois)
-      res.data.pois.forEach((item, index) => {
-        console.log(item)
-        const a = item.location.split(',')
-        arr.push(
-          new AMap.Marker({
-            content: `<div style="display: inline-block;
+          zoom: 11, //级别
+          // center: [118.78, 32.07], //中心点坐标
+          viewMode: "3D" //使用3D视图
+        });
+        const arr = [];
+        console.log(res.data.pois);
+        res.data.pois.forEach((item, index) => {
+          console.log(item);
+          const a = item.location.split(",");
+          var p1 = [this.data.location.longitude, this.data.location.latitude];
+        var p2 = [a[0], a[1]];
+        // 返回 p1 到 p2 间的地面距离，单位：米
+        var dis = AMap.GeometryUtil.distance(p1, p2); 
+        this.gdmap[index].distance = Math.floor((dis/1000) * 100) / 100+'公里'
+          arr.push(
+            new AMap.Marker({
+              content: `<div style="display: inline-block;
                 width: 22px;
                 height: 36px;
                 background-image: url(https://webapi.amap.com/theme/v1.3/markers/b/mark_b.png);
@@ -144,31 +145,28 @@ export default {
                 text-align: center;
                 line-height: 24px;
                 color: #fff;">${index + 1}</div>`,
-            position: new AMap.LngLat(
-              a[0],a[1]
-            ), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
-            title: `${item.name}`
-          })
-        );
+              position: new AMap.LngLat(a[0], a[1]), // 经纬度对象，也可以是经纬度构成的一维数组[116.39, 39.9]
+              title: `${item.name}`
+            })
+          );
+        });
+
+        // 将创建的点标记添加到已有的地图实例：
+        map.add(arr);
+        map.setFitView();
       });
+    }
+  }
+  // {https://restapi.amap.com/v3/place/text}
+  //  window.setTimeout(v => {
+  //   console.log(this.data)
+  //   this.data.location.longitude
+  //   location.latitude
+  //   this.$axios({
 
-      // 将创建的点标记添加到已有的地图实例：
-      map.add(arr);
-      map.setFitView();
-      })
-      
-      }
-  },
-    // {https://restapi.amap.com/v3/place/text}
-    //  window.setTimeout(v => {
-    //   console.log(this.data)
-    //   this.data.location.longitude
-    //   location.latitude
-    //   this.$axios({
+  //   })
 
-    //   })
-      
-    // }, 3000);
+  // }, 3000);
 };
 </script>
 <style lang="less" scoped>
