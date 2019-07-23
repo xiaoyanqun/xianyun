@@ -116,7 +116,7 @@ export default {
           output: "json",
           page: 1,
           offset: 10,
-          key: "79041dfa1c752f49599e2b507c64da42"
+          key: "ce679a166b7d2ac2b321063409d1c586"
         }       
       }).then(res => {
         this.gdmap = res.data.pois;

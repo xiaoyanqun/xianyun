@@ -1,7 +1,7 @@
 <template>
   <div class="detail-correlation">
     <h4>相关攻略</h4>
-    <nuxt-link :to="`/post/detail?id=${item.id}`" v-for="(item,index) in data" :key="index">
+    <nuxt-link @click.native="dianji" :to="`/post/detail?id=${item.id}`" v-for="(item,index) in data" :key="index">
        <el-row type="flex" class="list">
       <div class="img">
         <img :src="item.images[0]" alt />
@@ -35,6 +35,11 @@ export default {
       })
       this.data = arr
     })
+  },
+  methods:{
+    dianji(){
+      this.$emit('dianji')
+    }
   }
 };
 </script>

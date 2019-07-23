@@ -2,7 +2,7 @@
   <div>
     <h2>评论</h2>
     <div class="iscon" v-if="name != ''">
-      <el-tag closable type="info" >回复 @{{name}}</el-tag>
+      <el-tag closable type="info" @close="handleclose">回复 @{{name}}</el-tag>
     </div>
     <div class="con">
       <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="addform.content"></el-input>
@@ -44,6 +44,7 @@
   </div>
 </template>
 <script>
+// import A from "@/components/post/a.vue";
 import CommenList from "@/components/post/commen-list.vue";
 export default {
   data() {
@@ -66,9 +67,14 @@ export default {
     };
   },
   components: {
-    CommenList
+    CommenList,
+    // A
   },
   methods: {
+    handleclose(){
+      this.name=''
+      this.addform.follow = ''
+    },
     // 发表评论
     add(){  
       console.log(this.addform)
@@ -84,10 +90,12 @@ export default {
       }).then(res=>{
         console.log(res.data)
         this.init()
+        this.addform.content = ''
       })
       
     },
     reply(obj){
+      
       console.log(obj)
       this.name = obj.name
       this.addform.follow = obj.follow

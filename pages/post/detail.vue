@@ -5,11 +5,11 @@
         <!-- 文章区域 -->
         <Detailpost />
         <!-- 评论 -->
-        <Detailcomment />
+        <Detailcomment ref="Detailcomment" />
       </div>
       <!-- 相关攻略 -->
       <div class="right">
-        <DetailCorrelation />
+        <DetailCorrelation @dianji="dianji"/>
       </div>
     </el-row>
   </div>
@@ -26,6 +26,12 @@ export default {
     Detailpost,
     DetailCorrelation,
     Detailcomment
+  },
+  methods:{
+    dianji(){
+      console.log(1)
+      this.$refs.Detailcomment.init()
+    }
   }
 };
 </script>

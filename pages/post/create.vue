@@ -154,6 +154,12 @@ export default {
         }).then(res => {
           console.log(res);
           this.$message.success("新增成功");
+          this.$refs.vueEditor.editor.root.innerHTML = ''
+          this.addform = {
+            content: "",
+            title: "",
+            city: ""
+          }
         });
       }
     },

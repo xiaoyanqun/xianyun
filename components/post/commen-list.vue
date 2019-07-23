@@ -3,7 +3,7 @@
     <div class="info">
       <img :src="$axios.defaults.baseURL+data.account.defaultAvatar" alt />
       {{data.account.nickname}}
-      <i>2019-07-20 10:34</i>
+      <i>{{data.updated_at}}</i>
       <span>{{data.level}}</span>
     </div>
     <div class="content">
@@ -32,6 +32,7 @@
   </div>
 </template>
 <script>
+import moment from "moment";
 export default {
   name: "Item",
   data() {
@@ -70,6 +71,8 @@ export default {
   },
   mounted() {
     console.log(this.data);
+    this.data.updated_at = moment(this.data.updated_at).format("YYYY-MM-DD HH:mm")
+  
   }
 };
 </script>
